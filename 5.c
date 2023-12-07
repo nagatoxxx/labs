@@ -36,6 +36,11 @@ static FILE* createFile()
 {
     FILE* f = fopen("f.txt", "w+");
 
+    if (f == NULL) {
+        printf("Не удалось открыть файл\n");
+        exit(1);
+    }
+
     // заполняет файл случайными строками
     char buf[512];
     strcpy(buf, " stroka11  \n");
@@ -59,6 +64,11 @@ static FILE* createFile()
 static FILE* solve(FILE* f)
 {
     FILE* g = fopen("g.txt", "w+");
+
+    if (g == NULL) {
+        printf("Не удалось создать файл!");
+        exit(1);
+    }
 
     // вычислить размер файла
     fseek(f, 0, SEEK_END);
