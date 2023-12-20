@@ -14,7 +14,7 @@ int main()
     char buf[512];
     printf("Введите текст:\n");
     fgets(buf, 512, stdin);
-    if (strlen(buf) == 0) {
+    if (strlen(buf) == 0 || buf[0] == '.') {
         printf("Строка должна содержать как минимум 1 слово\n");
         return 1;
     }

@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     printf("Выберите режим:\n1. Число членов суммы;\n2. Заданная "
            "точность.\n> ");
     if (scanf("%d", &ch) != 1) {
-        printf("Введите 1 или 2...\n");
+        printf("Повторите еще раз.\n");
         return 1;
     }
     switch (ch) {
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
             double x = 0.0f;
             printf("Введите x и число членов последовательности: ");
             if (scanf("%lf %d", &x, &n) != 2) {
-                printf("Ошибка!\n");
+                printf("Ошибка! Повторите еще раз.\n");
                 return 1;
             }
             if (abs((int)x) >= 1) {
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
             double x = 0.0f;
             printf("Введите x и точность: ");
             if (scanf("%lf %lf", &x, &p) != 2) {
-                printf("Ошибка!\n");
+                printf("Ошибка! Повторите еще раз.\n");
                 return 1;
             }
 
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
         }
         default:
         {
-            printf("Введите 1 или 2...\n");
+            printf("Введите 1 или 2.\n");
             return 1;
         }
     }

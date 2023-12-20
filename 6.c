@@ -18,8 +18,10 @@ int main(int argc, char* argv[])
     FILE* f = fopen("f.bin", "w+b");
 
     fillFile(f);
+    puts("Содержимое файла до изменений:");
     printFile(f);
     solve(f);
+    puts("Содержимое файла после изменений:");
     printFile(f);
 
     fclose(f);

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 /*
  * размерность массива в программе: m x n
@@ -31,7 +32,6 @@ int main(int argc, char* argv[])
 {
     int matrix[m][n];
 
-
     readMatrix(matrix);
 
     printf("Вы ввели:\n");
@@ -49,7 +49,10 @@ static void readMatrix(int matrix[m][n])
     for (int i = 0; i < m; i++) {
         printf("Введите строку %i:\n", (i + 1));
         for (int j = 0; j < n; j++) {
-            scanf("%i", &(matrix[i][j]));
+            if (scanf("%i", &(matrix[i][j])) != 1) {
+                puts("Повторите еще раз!");
+                exit(1);
+            }
         }
     }
 }
