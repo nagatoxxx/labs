@@ -74,13 +74,13 @@ void DB_Print(struct database* db)
         return;
     }
 
-    printf(BOLD "%6s%20s%20s%20s%20s%20s\n",
+    printf(BOLD "%6s%20s%20s%20s%20s%20s\n" RESET,
            "Number",
            "Full name",
            "Club",
            "Age",
            "Matches",
-           "Goals" RESET);
+           "Goals");
     for (size_t i = 0; i < db->size; i++) {
         printRow(db->rows[i], 0, i);
     }
