@@ -29,7 +29,7 @@ static void printRow(struct row_t* row, uint8_t hightlight, uint64_t idx)
         printf(FG_GREEN);
     }
 
-    printf("%lu\t%s\t%s\t%lu\t%lu\t%lu\n",
+    printf("%6lu%20s%20s%20lu%20lu%20lu\n",
            idx,
            row->name,
            row->club,
@@ -74,7 +74,13 @@ void DB_Print(struct database* db)
         return;
     }
 
-    printf(BOLD "\nNumber\tFull name\tClub\t\tAge\tMatches\tGoals\n" RESET);
+    printf(BOLD "%6s%20s%20s%20s%20s%20s\n",
+           "Number",
+           "Full name",
+           "Club",
+           "Age",
+           "Matches",
+           "Goals" RESET);
     for (size_t i = 0; i < db->size; i++) {
         printRow(db->rows[i], 0, i);
     }
