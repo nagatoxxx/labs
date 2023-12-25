@@ -96,19 +96,29 @@ static double avg(int* array, int k)
     int sum   = 0;
     int count = 0;
 
-    int firstOdd = -1; // индекс первого нечетного элемента
+    int firstEven = -1; // индекс первого четного элемента
     int lastEven = -1; // индекс последнего четного элемента
 
     for (int i = 0; i < k; i++) {
-        if (firstOdd == -1 && array[i] & 1) {
-            firstOdd = i;
+        if (firstEven == -1 && !(array[i] & 1)) {
+            firstEven = i;
             continue;
         }
 
         if (!(array[i] & 1)) { // проверка на четность
             lastEven = i;
         }
+    }
 
+    if (firstEven == lastEven - 1) {
+        return 0.0;
+    }
+
+    if (firstEven == -1 || lastEven == -1) {
+        return 0.0f;
+    }
+
+    for (int i = firstEven + 1; i < lastEven; i++) {
         sum += array[i];
         count += 1;
     }

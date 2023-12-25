@@ -12,7 +12,7 @@ static void removeChar(char* str);
 int main()
 {
     char buf[512];
-    printf("Введите текст:\n");
+    printf("-> Введите текст:\n");
     fgets(buf, 512, stdin);
     if (strlen(buf) == 0 || buf[0] == '.') {
         printf("Строка должна содержать как минимум 1 слово\n");
@@ -23,10 +23,11 @@ int main()
         printf("Строка должна оканчиваться точкой\n");
         return 1;
     }
+    printf("-> Преобразованная строка:\n");
 
     print(buf);
 
-    printf("Вы ввели:\n%s\n", buf);
+    printf("-> Вы ввели:\n%s\n", buf);
 
 
     return 0;

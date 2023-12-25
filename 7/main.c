@@ -164,7 +164,7 @@ int main()
                     DB_SearchWithAttribute(db, DB_ATTR_GOALS, &g);
                 }
                 else {
-                    printf(ERR "Повторите ввод!" RESET);
+                    printf(ERR "Повторите ввод!\n" RESET);
                 }
                 break;
             }
@@ -222,7 +222,7 @@ int main()
                     DB_SortWithAttribute(db, DB_ATTR_GOALS);
                 }
                 else {
-                    printf(ERR "Повторите ввод!" RESET);
+                    printf(ERR "Повторите ввод!\n" RESET);
                 }
                 break;
             }

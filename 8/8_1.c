@@ -1,6 +1,16 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define readString(buffer, size)                  \
+    do {                                          \
+        fgets(buffer, size, stdin);               \
+        size_t len = strlen(buffer);              \
+        if (len > 0 && buffer[len - 1] == '\n') { \
+            buffer[len - 1] = '\0';               \
+        }                                         \
+    } while (0)
 
 typedef struct
 {
@@ -40,51 +50,30 @@ static void printList(List* list);
 static void parse(List* list, const char* expression);
 
 /*
- * измененная версия strcspn из исходного кода apple
- */
-size_t cspn(const char* s1, const char* s2)
-{
-    register const char *p, *spanp;
-    register char        c, sc;
-
-    for (p = (s1 + 1);;) { // изменение здесь
-        c     = *p++;
-        spanp = s2;
-        do {
-            if ((sc = *spanp++) == c) {
-                return (s1 > p) ? 0 : (p - 1 - s1); // и здесь
-            }
-        } while (sc != 0);
-    }
-}
-
-/*
  * составляет новый многочлен и помещает его в dest
  */
-void solve(List* dest, List* l1, List* l2);
+static void solve(List* dest, List* l1, List* l2);
+
+static void listToString(List* list);
 
 int main()
 {
+    const char* e1 = "x^2-x^5+7+x";
+    const char* e2 = "-5x^2+x^3+x-3x^5";
+
     List* l1  = createList();
     List* l2  = createList();
     List* res = createList();
-
-    const char* e1 = "2x^2-4x^5+7";
-    const char* e2 = "-5x^2+x^3+x-3x^5";
 
     parse(l1, e1);
     parse(l2, e2);
 
     solve(res, l1, l2);
 
-    printf("%s:\n", e1);
-    printList(l1);
-    putc('\n', stdout);
-    printf("%s:\n", e2);
-    printList(l2);
-    putc('\n', stdout);
-    printf("res: \n");
-    printList(res);
+    printf("%s\n", e1);
+    printf("%s\n", e2);
+
+    listToString(res);
 
     freeList(l1);
     freeList(l2);
@@ -155,65 +144,70 @@ static void printList(List* list)
 
 static void parse(List* list, const char* expression)
 {
-    size_t left = 0;
-    char   buf[64];
-    memset(buf, 0, 64);
+    char* copy = strdup(expression);
 
-    while (strlen(expression) - left > 0) {
-        size_t len = cspn((expression + left), "+-");
-        memcpy(buf, (expression + left), len);
-        left += len;
+    // добавляем пробел перед каждым плюсом и минусом
+    int len = strlen(copy);
+    for (int i = 0; i < len; i++) {
+        if (copy[i] == '+' || copy[i] == '-') {
+            len += 2;
+            copy = realloc(copy, len);
+            memmove(copy + i + 1, copy + i, strlen(copy + i));
+            copy[i] = ' ';
+            i++;
+        }
+    }
 
-        char num[sizeof(buf)]; // строка в которую поммещаются цифры числа
-        memset(num, 0, sizeof(buf));
+    char* tok = strtok(copy, " ");
+    while (tok != NULL) {
+        // обработка одночлена
 
-        Element e = {0, 0};
-        int isX = (cspn(buf, "x") == strlen(buf)) ? 0 : 1; // фигурирует ли переменная?
-        int isPower = (cspn(buf, "^") == strlen(buf)) ? 0 : 1; // указана ли степень одночлена?
+        int isX = (strcspn(tok, "x") == strlen(tok)) ? 0 : 1; // фигурирует ли переменная?
+        int isPower = (strcspn(tok, "^") == strlen(tok)) ? 0 : 1; // указана ли степень одночлена?
+
+        int coef = 0;
+        int exp  = 0;
 
         if (isX) {
-            int res  = 0;
-            int xpos = strcspn(buf, "x");
-            strncpy(num, buf, xpos);
-            if (strlen(num) == 1 && (num[0] == '-' || num[0] == '+'))
-                res = (num[0] == '-') ? -1 : 1;
-            else {
-                res = atoi(num);
-            }
+            char buf[32] = {0};
+            int  xpos    = strcspn(tok, "x");
+            strncpy(buf, tok, xpos);
 
-            e.coefficient = res;
-            e.exponent    = 1;
-            memset(num, 0, sizeof(num));
+            if (strlen(buf) == 0) {
+                coef = 1;
+            }
+            else if (strlen(buf) == 1 && !isdigit(buf[0])) {
+                coef = (buf[0] == '+') ? 1 : -1;
+            }
+            else {
+                coef = atoi(buf);
+            }
+            exp = 1;
         }
 
         if (isPower) {
-            int res  = 0;
-            int ppos = strcspn(buf, "^");
+            char buf[32] = {0};
+            int  ppos    = strcspn(tok, "^");
+            strcpy(buf, tok + ppos + 1);
 
-            strcpy(num, (buf + ppos + 1));
-
-            res        = atoi(num);
-            e.exponent = res;
-            memset(num, 0, sizeof(num));
+            exp = atoi(buf);
         }
 
         if (!isPower && !isX) {
-            int res = atoi(buf);
-
-            e.coefficient = res;
-            e.exponent    = 0;
+            coef = atoi(tok);
         }
 
+        Element e = {coef, exp};
         append(list, e);
 
-        memset(buf, '\0', sizeof(buf));
+        tok = strtok(NULL, " ");
     }
+
+    free(copy);
 }
 
-void solve(List* dest, List* l1, List* l2)
+static void solve(List* dest, List* l1, List* l2)
 {
-    //  очень неэффективно
-    //  если использовать hashset, то можно сделать быстрее
     Node* i1 = l1->head;
 
     while (i1 != NULL) {
@@ -228,4 +222,22 @@ void solve(List* dest, List* l1, List* l2)
         }
         i1 = (Node*)i1->next;
     }
+}
+
+static void listToString(List* list)
+{
+    Node* n = list->head;
+    while (n != NULL) {
+        if (n->data.coefficient > 0) {
+            printf("+");
+        }
+        printf("%d", n->data.coefficient);
+
+        if (n->data.exponent != 0) {
+            printf("x^%d", n->data.exponent);
+        }
+
+        n = (Node*)n->next;
+    }
+    printf("\n");
 }

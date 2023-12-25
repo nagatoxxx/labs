@@ -53,9 +53,15 @@ static FILE* createFile()
     fwrite(buf, 1, strlen(buf), f);
 
     memset(buf, '\0', 32);
-    strcpy(buf, " 123123 123123123 12313123 ");
+    strcpy(buf, " 123123 12312312312313 123 ");
 
     fwrite(buf, 1, strlen(buf), f);
+    memset(buf, '\0', 32);
+
+    strcpy(buf, " 324 24334      \n");
+
+    fwrite(buf, 1, strlen(buf), f);
+
     fseek(f, 0, SEEK_SET);
 
     return f;
